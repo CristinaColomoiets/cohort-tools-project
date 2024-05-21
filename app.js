@@ -9,7 +9,7 @@ const cohortsData = require(`./cohorts.json`);
 const studentsData = require(`./students.json`);
 
 const cors = require('cors')
-
+//cris no me habla bien
 
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
@@ -33,11 +33,11 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
-app.get('/api/cohorts', (req, res)=>{
+app.get('/api/cohorts', (req, res) => {
   res.json(cohortsData)
 })
 
-app.get('/api/students', (req, res)=>{
+app.get('/api/students', (req, res) => {
   res.json(studentsData)
 })
 
