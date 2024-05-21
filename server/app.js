@@ -9,11 +9,12 @@ const cohortsData = require(`./cohorts.json`);
 const studentsData = require(`./students.json`);
 
 const cors = require('cors')
-//cris no me habla bien
-
+con
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
+const mongoose = require("mongoose");
+
 
 
 // MIDDLEWARE
@@ -29,6 +30,11 @@ app.use(cookieParser());
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
 // ...
+mongoose
+  .connect("mongodb://127.0.0.1:27017/cohorts-tools-api")
+  .then(x => console.log(`Connected to Database: "${x.connections[0].name}"`))
+  .catch(err => console.error("Error connecting to MongoDB", err));
+
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
