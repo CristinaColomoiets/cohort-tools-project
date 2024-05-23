@@ -30,21 +30,71 @@ app.use(cookieParser());
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
 // ...
+
 mongoose
   .connect("mongodb://127.0.0.1:27017/cohorts-tools-api")
   .then(x => console.log(`Connected to Database: "${x.connections[0].name}"`))
   .catch(err => console.error("Error connecting to MongoDB", err));
+
+
+
+// Model schema
+const cohortSchema = new mongoose.Schema({
+  _id: String,
+  inProgress: Boolean,
+  cohortSlug: String,
+  cohortName: String,
+  program: String,
+  campus: String,
+  startDate: Date,
+  endDate: Date,
+  programManager: String,
+  leadTeacher: String,
+  totalHours: Number
+})
+
+const studentSchema = new mongoose.Schema({
+  _id: String,
+  firstName: String,
+  lastName: String,
+  email: String,
+  phone: Number,
+  linkedin_url: String,
+  languages: [String],
+  program: String,
+  background: String,
+  image: String,
+  projects: [String],
+  cohort: String
+
+})
+
+// Model
+const CohortModel = mongoose.model('cohort', cohortSchema)
+const StudentModel = mongoose.model('student', studentSchema)
+
+
 
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
 app.get('/api/cohorts', (req, res) => {
-  res.json(cohortsData)
+
+  CohortModel
+    .find()
+    .then(allMovies => res.json(cohortsData))
+    .catch(err => res.json({ code: 500, errorDetails: err }))
+
 })
 
 app.get('/api/students', (req, res) => {
-  res.json(studentsData)
+
+  StudentModel
+    .find()
+    .then(allMovies => res.json(studentsData))
+    .catch(err => res.json({ code: 500, errorDetails: err }))
+
 })
 
 
