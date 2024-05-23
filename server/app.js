@@ -18,52 +18,14 @@ const app = express();
 
 
 // MIDDLEWARE
-// Research Team - Set up CORS middleware here:
-// ...
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-
-
-
-
-// Model schema
-const cohortSchema = new mongoose.Schema({
-  _id: String,
-  inProgress: Boolean,
-  cohortSlug: String,
-  cohortName: String,
-  program: String,
-  campus: String,
-  startDate: Date,
-  endDate: Date,
-  programManager: String,
-  leadTeacher: String,
-  totalHours: Number
-})
-
-const studentSchema = new mongoose.Schema({
-  _id: String,
-  firstName: String,
-  lastName: String,
-  email: String,
-  phone: Number,
-  linkedin_url: String,
-  languages: [String],
-  program: String,
-  background: String,
-  image: String,
-  projects: [String],
-  cohort: String
-
-})
-
-// Model
-const CohortModel = mongoose.model('cohort', cohortSchema)
-const StudentModel = mongoose.model('student', studentSchema)
+app.use(cors({
+  origin: ['http://localhost:5005', 'http://localhost:5173']
+}))
 
 
 
@@ -73,6 +35,7 @@ app.get("/docs", (req, res) => {
 
 
 // COHORTS:
+
 app.get('/api/cohorts', (req, res) => {
 
   Cohort
@@ -141,6 +104,19 @@ app.get('/api/students/:studentId', (req, res) => {
     .catch(err => res.json({ code: 500, errorDetails: err }))
 })
 
+app.get('/api/students/cohort/:cohortId', (req, res) => {
+
+  const { cohortId } = req.params
+
+  Student
+    .find({ cohort: cohortId })
+    .populate('cohort')
+    .then(student => res.json(student))
+    .catch(err => res.json({ code: 500, errorDetails: err }))
+
+
+})
+
 app.post('/api/students', (req, res) => {
   const { firstName, lastName, email, phone, likedinUrl, languages, program, background, image, projects, cohort } = req.body
 
@@ -160,6 +136,7 @@ app.put('/api/students/:studentId', (req, res) => {
     .catch(err => res.json({ code: 500, errorDetails: err }))
 })
 
+
 app.delete('/api/students/:studentId', (req, res) => {
   const { studentId } = req.params
 
@@ -170,8 +147,10 @@ app.delete('/api/students/:studentId', (req, res) => {
 })
 
 
+const { errorHandler, notFoundHandler } = require('./middleware/error-handling');
 
-
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // START SERVER
 app.listen(PORT, () => {
